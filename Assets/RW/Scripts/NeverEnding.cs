@@ -4,22 +4,18 @@ using UnityEngine;
 
 public class NeverEnding : MonoBehaviour{
     public GameObject[] availableRooms;
-    public List<GameObject> currentRooms;
-    private float screenWidthInPoints;
     public GameObject[] availableObjects;
+    public List<GameObject> currentRooms;
     public List<GameObject> objects;
 
+    private float screenWidthInPoints;
     public float objectsMinDistance = 5.0f;
     public float objectsMaxDistance = 10.0f;
-
     public float objectsMinY = -1.4f;
     public float objectsMaxY = 1.4f;
-
     public float objectsMinRotation = -45.0f;
     public float objectsMaxRotation = 45.0f;
 
-
-    // Start is called before the first frame update
     void Start(){
         float height = 2.0f * Camera.main.orthographicSize;
         screenWidthInPoints = height * Camera.main.aspect;
@@ -28,54 +24,44 @@ public class NeverEnding : MonoBehaviour{
 
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    void Update(){
     }
 
-    void AddObject(float lastObjectX)
-    {
+    void AddObject(float lastObjectX){
         int randomIndex = Random.Range(0, availableObjects.Length);
         GameObject obj = (GameObject)Instantiate(availableObjects[randomIndex]);
         float objectPositionX = lastObjectX + Random.Range(objectsMinDistance, objectsMaxDistance);
         float randomY = Random.Range(objectsMinY, objectsMaxY);
         obj.transform.position = new Vector3(objectPositionX,randomY,0); 
         float rotation = Random.Range(objectsMinRotation, objectsMaxRotation);
+
         obj.transform.rotation = Quaternion.Euler(Vector3.forward * rotation);
         objects.Add(obj);            
     }
 
-    void GenerateObjectsIfRequired()
-    {
-        //1
+    void GenerateObjectsIfRequired(){
         float playerX = transform.position.x;
         float removeObjectsX = playerX - screenWidthInPoints;
         float addObjectX = playerX + screenWidthInPoints;
         float farthestObjectX = 0;
-        //2
         List<GameObject> objectsToRemove = new List<GameObject>();
-        foreach (var obj in objects)
-        {
-            //3
+
+        foreach (var obj in objects){
+
             float objX = obj.transform.position.x;
-            //4
             farthestObjectX = Mathf.Max(farthestObjectX, objX);
-            //5
-            if (objX < removeObjectsX) 
-            {           
+
+            if (objX < removeObjectsX){           
                 objectsToRemove.Add(obj);
             }
         }
-        //6
-        foreach (var obj in objectsToRemove)
-        {
+
+        foreach (var obj in objectsToRemove){
             objects.Remove(obj);
             Destroy(obj);
         }
-        //7
-        if (farthestObjectX < addObjectX)
-        {
+
+        if (farthestObjectX < addObjectX){
             AddObject(farthestObjectX);
         }
     }
@@ -121,23 +107,9 @@ public class NeverEnding : MonoBehaviour{
                 contador ++;
                 continue;
             }
-            // float roomWidth = room.transform.Find("floor").localScale.x;
-            // float roomStartX = room.transform.position.x - (roomWidth * 0.5f);
-            // float roomEndX = roomStartX + roomWidth;
-            // float operationTEX = transform.position.x - roomEndX;
-            // float operationEXT = roomEndX - transform.position.x;
-            // Debug.Log("roomStartX: " + roomStartX);
-            // Debug.Log("roomEndXt: " + operationEXT);
-            // Debug.Log("roomEndtX: " + operationTEX );
-            // Debug.Log("roomwidth: " + roomWidth);
+            
             currentRooms.Remove(room);
             Destroy(room);
-            // if (operationTEX > 16){
-            //     currentRooms.Remove(room);
-            //     Destroy(room);
-            // }
-            
-            
         }
 
         if (addRooms){

@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class DinoController : MonoBehaviour
 {
-    public float jumpForce = 1.0f;
+    public float jumpForce = 10f;
     public float forwardMovementSpeed = 0.1f;
     private bool isGrounded;
     private Rigidbody2D playerRigidbody;
@@ -16,56 +16,68 @@ public class DinoController : MonoBehaviour
     private bool dead = false;
     private uint coins = 0;
     public Text coinsCollectedLabel;
-    public Button restartButton;
+    public Button restartButton, quitAfterDiedButton;
+    public AudioSource jumpSound;
+    public AudioSource collectCoinSound;
+    public AudioSource dieSound;
 
-    // Start is called before the first frame update
     void Start(){
         playerRigidbody = GetComponent<Rigidbody2D>();
         dinoAnimator = GetComponent<Animator>();
 
     }
-    public void RestartGame()
-    {
+
+    public void RestartGame(){
         SceneManager.LoadScene("SampleScene");
     }
+
+    public void QuitMainMenu(){
+        SceneManager.LoadScene("MainMenu");
+    }
+    
     void FixedUpdate(){
         UpdateGroundedStatus();
         bool jumpActive = Input.GetKey("space");
         jumpActive = jumpActive && !dead;
+
         if (jumpActive){
             playerRigidbody.AddForce(new Vector2(0, jumpForce));
         }
+
         if (!dead){
             Vector2 newVelocity = playerRigidbody.velocity;
             if (forwardMovementSpeed < 8.0){
                 forwardMovementSpeed = forwardMovementSpeed + (float) 0.007;
-            }else{
-                forwardMovementSpeed = forwardMovementSpeed + (float) 0.002;
+                jumpForce = jumpForce + (float) 0.0005;
+            } else{
+                forwardMovementSpeed = forwardMovementSpeed + (float) 0.003;
             }
+
             newVelocity.x = forwardMovementSpeed;
             playerRigidbody.velocity = newVelocity;
-        }else{
+        } else{
             Vector2 newVelocity = playerRigidbody.velocity;
             newVelocity.x = 0;
             playerRigidbody.velocity = newVelocity;
             restartButton.gameObject.SetActive(true);
+            quitAfterDiedButton.gameObject.SetActive(true);
         }
 
         UpdateGroundedStatus();
-
     }
-    void CollectCoin(Collider2D coinCollider)
-    {
-        coins = coins+1;
+
+    void CollectCoin(Collider2D coinCollider){
+        coins = coins + 1;
         coinsCollectedLabel.text = coins.ToString();
         Destroy(coinCollider.gameObject);
+        collectCoinSound.Play();
     }
 
-    void CollectEgg(Collider2D eggCollider)
-    {
-        coins = coins+5;
+    void CollectEgg(Collider2D eggCollider){
+        coins = coins + 5;
         coinsCollectedLabel.text = coins.ToString();
         eggCollider.gameObject.SetActive(false);
+        collectCoinSound.Play();
     }
 
     void UpdateGroundedStatus(){
@@ -73,31 +85,25 @@ public class DinoController : MonoBehaviour
         dinoAnimator.SetBool("isGrounded", isGrounded);
     }
 
-    // Update is called once per frame
     void Update(){
         Vector2 newVelocity = playerRigidbody.velocity;
         newVelocity.x = forwardMovementSpeed;
         playerRigidbody.velocity = newVelocity;
+    
     }
 
-    void OnTriggerEnter2D(Collider2D collider)
-    {
-        if (collider.gameObject.CompareTag("coins"))
-        {
+    void OnTriggerEnter2D(Collider2D collider){
+        if (collider.gameObject.CompareTag("coins")){
             CollectCoin(collider);
-        }
-        else if (collider.gameObject.CompareTag("egg"))
-        {
+        } else if (collider.gameObject.CompareTag("egg")){
             CollectEgg(collider);
-        }
-        else
-        {
+        } else {
+            dieSound.Play();
             HitByLog(collider);
         }
     }
 
-    void HitByLog(Collider2D logCollider)
-    {
+    void HitByLog(Collider2D logCollider){
         dead = true;
         dinoAnimator.SetBool("dead", true);
     }
