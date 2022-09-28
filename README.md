@@ -14,6 +14,6 @@ Fazer o seu Dino ficar o mais rico possível, coletando moedas durante a sua jor
 
 ### Controles
 
-O único controle ativo durante o gameplay é a barra de espaço, tornando o jogo ideal para players de todas as idades! A barra ativa os poderes de voar, fazendo com que o Dino dê um salto voador para sobrevoar a floresta, pegar as moedas e ovos, e desviar dos obstáculos.
+O único controle ativo durante o gameplay é a barra de espaço, tornando o jogo ideal para players de todas as idades! A barra ativa os poderes de voar, fazendo com que o Dino dê um salto voador para sobrevoar a floresta, pegar as moedas e ovos, e desviar dos obstáculos. Já fora do jogo, a interação com o jogo é feita via mouse!
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------------
